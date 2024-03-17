@@ -8,7 +8,7 @@ This project aims to create a comprehensive management system for a small amateu
 
 - **Attendance and Payment Tracking**: Monitors member attendance at practice sessions and manages payment records, including options for advance payments with potential discounts.
 - **Financial Management**: Handles the club's finances, ensuring the coach and rent for the hall are paid timely. Provides insights into the financial health of the club.
-- **Reminder System**: Sends out reminders to members for upcoming regular and ad hoc practice sessions, and nudges those who have pending payments.
+- **Reminder System**: Sends out reminders to members for upcoming practice sessions, and nudges those who have pending payments.
 - **Flexibility and Engagement**: Encourages member participation by offering a flexible attendance model while maintaining financial accountability.
 
 ## Deliverables
