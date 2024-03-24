@@ -6,6 +6,8 @@ import (
 	"CPS406-Assignment-Backend/pkg/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"time"
 )
@@ -15,13 +17,19 @@ func main() {
 	dataBase := db.ConnectDB()
 	// Migrate the database
 	db.MigrateDB(dataBase)
-	dataBase.Create(&user.User{Name: "test1", Password: "test"})
-	dataBase.Create(&user.User{Name: "test3", Password: "test"})
-	dataBase.Create(&user.User{Name: "test4", Password: "test"})
+	dataBase.Create(&user.User{Name: "test1", Password: "test", Email: "test1@mail.com"})
+	dataBase.Create(&user.User{Name: "test3", Password: "test", Email: "test2@mail.com"})
+	dataBase.Create(&user.User{Name: "test4", Password: "test", Email: "test3@mail.com"})
 	// Create a new router (chi router)
-	r := chi.NewRouter()
+
+	// Load the .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
 	// A good base middleware stack
+	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
