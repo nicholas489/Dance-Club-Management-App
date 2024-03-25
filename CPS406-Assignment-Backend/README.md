@@ -131,6 +131,7 @@ This data is meant for initial development and testing only and should not be us
 | POST   | `/user/join/event`  | Allows a user to join an event     | `JwtMiddlewareUser`                        |
 | POST   | `/coach/event/make` | Allows a coach to create an event  | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
 | GET    | `/coach/{name}`     | Retrieves a specific event by name | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
+| DELETE | `/coach/delete/{email}` | Deletes user by email          | None                                       |
 
 
 
