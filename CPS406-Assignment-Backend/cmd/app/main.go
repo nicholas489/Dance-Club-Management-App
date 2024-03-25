@@ -3,6 +3,7 @@ package main
 import (
 	"CPS406-Assignment-Backend/internal/api/http/server"
 	"CPS406-Assignment-Backend/internal/db"
+	"CPS406-Assignment-Backend/pkg/coach"
 	"CPS406-Assignment-Backend/pkg/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,6 +21,12 @@ func main() {
 	dataBase.Create(&user.User{Name: "test1", Password: "test", Email: "test1@mail.com"})
 	dataBase.Create(&user.User{Name: "test3", Password: "test", Email: "test2@mail.com"})
 	dataBase.Create(&user.User{Name: "test4", Password: "test", Email: "test3@mail.com"})
+	dataBase.Create(&coach.Coach{
+		UserName:    "first",
+		Email:       "first@gmail.com",
+		PhoneNumber: 0,
+		Password:    "test",
+	})
 	// Create a new router (chi router)
 
 	// Load the .env file

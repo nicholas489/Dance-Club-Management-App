@@ -11,7 +11,7 @@ type Event struct {
 	CoachEmail string      `json:"coach_email"` // Store email to fetch and associate Coach
 	Location   string      `json:"location"`
 	Cost       int         `json:"cost"`
-	Users      []user.User `json:"users" gorm:"foreignKey:EventID"` // Assuming User struct has an EventID field for the association
+	Users      []user.User `json:"users"`
 }
 
 type UserEvent struct {
