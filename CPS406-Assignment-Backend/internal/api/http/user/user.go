@@ -62,6 +62,7 @@ func PostLogin(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	}
 	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{User: true}})
 	tokenString, err := util.GenerateJWT(user.Email, privileges)
+	util.SetTokenAsCookie(w, tokenString)
 	if err != nil {
 		util.SendJSONError(w, "Failed to generate token", http.StatusInternalServerError)
 		return
@@ -69,12 +70,10 @@ func PostLogin(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	// If the passwords match, send the user details
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Authorization", "Bearer "+tokenString)
 	response := map[string]string{
 		"message": "Login successful",
 		"email":   user.Email,
 		"name":    user.Name,
-		"token":   tokenString,
 	}
 	json.NewEncoder(w).Encode(response)
 }
@@ -106,6 +105,8 @@ func PostSignup(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		util.SendJSONError(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
+	util.SetTokenAsCookie(w, tokenString)
+
 	// Send the user details and token as a response and set status code to 201 (Created)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -113,7 +114,6 @@ func PostSignup(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		"message": "Signup successful",
 		"email":   u.Email,
 		"name":    u.Name,
-		"token":   tokenString,
 	}
 	json.NewEncoder(w).Encode(response)
 }
