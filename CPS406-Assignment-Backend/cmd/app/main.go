@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -55,7 +56,8 @@ func main() {
 		w.Write([]byte("The server is running!"))
 	})
 
-	// Listen for requests on port 8080
-	http.ListenAndServe(":8080", r)
+	// Listen for requests on port in your .env file
+	portNum := ":" + os.Getenv("PORT")
+	http.ListenAndServe(portNum, r)
 
 }

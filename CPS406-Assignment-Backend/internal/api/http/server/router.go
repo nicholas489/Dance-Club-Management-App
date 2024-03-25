@@ -53,6 +53,9 @@ func Server(r chi.Router, db *gorm.DB) {
 		r.Get("/{name}", func(writer http.ResponseWriter, request *http.Request) {
 			coach.GetEvent(writer, request, db)
 		})
+		r.Delete("/delete/{email}", func(writer http.ResponseWriter, request *http.Request) {
+			coach.DeleteUser(writer, request, db)
+		})
 
 	})
 

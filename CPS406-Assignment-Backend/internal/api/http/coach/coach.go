@@ -115,3 +115,18 @@ func PostSignup(writer http.ResponseWriter, request *http.Request, db *gorm.DB) 
 	writer.Header().Set("Authorization", "Bearer "+token)
 	json.NewEncoder(writer).Encode(coach)
 }
+
+func DeleteUser(writer http.ResponseWriter, request *http.Request, db *gorm.DB) {
+	// Get the email from the url
+	email := chi.URLParam(request, "email")
+
+	// Get the user from the database
+	var user user.User
+	db.First(&user, "email = ?", email)
+
+	// Delete the user from the database
+	db.Delete(&user)
+
+	// Send the user as a response
+	json.NewEncoder(writer).Encode(user)
+}
