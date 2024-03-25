@@ -15,6 +15,6 @@ type Event struct {
 }
 
 type UserEvent struct {
-	user.User
-	Event
+	EventName string `json:"event_name"`
+	UserEmail string `json:"user_email"`
 }

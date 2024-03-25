@@ -7,6 +7,7 @@ import (
 	"CPS406-Assignment-Backend/pkg/login"
 	"CPS406-Assignment-Backend/pkg/user"
 	"encoding/json"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
@@ -56,7 +57,7 @@ func PostLogin(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	// If the user exists, check if the passwords match
 	if user.Password != l.Password {
-		util.SendJSONError(w, "Invalid password", http.StatusUnauthorized)
+		util.SendJSONError(w, "Invalid password"+"password given: "+l.Password, http.StatusUnauthorized)
 		return
 	}
 	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{User: true}})
@@ -71,8 +72,9 @@ func PostLogin(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Authorization", "Bearer "+tokenString)
 	response := map[string]string{
 		"message": "Login successful",
-		"Email":   user.Email,
-		"Name":    user.Name,
+		"email":   user.Email,
+		"name":    user.Name,
+		"token":   tokenString,
 	}
 	json.NewEncoder(w).Encode(response)
 }
@@ -104,41 +106,82 @@ func PostSignup(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		util.SendJSONError(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
-	// Send the user details
+	// Send the user details and token as a response and set status code to 201 (Created)
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Authorization", "Bearer "+tokenString)
-	json.NewEncoder(w).Encode(u)
+	response := map[string]string{
+		"message": "Signup successful",
+		"email":   u.Email,
+		"name":    u.Name,
+		"token":   tokenString,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func JoinEvent(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	// Parse the request body user + event
 	var ue event.UserEvent
-	err := json.NewDecoder(r.Body).Decode(&ue)
-	if err != nil {
-		util.SendJSONError(w, err.Error(), http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&ue); err != nil {
+		util.SendJSONError(w, err.Error()+"ee", http.StatusBadRequest)
 		return
 	}
-	// Fine the event and add the user to the event
+
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	var e event.Event
-	result := db.First(&e, "name = ?", ue.Event.Name)
-	if result.Error != nil {
+	if result := tx.Preload("Users").Where("name = ?", ue.EventName).First(&e); result.Error != nil {
+		tx.Rollback()
 		util.SendJSONError(w, "Event not found", http.StatusNotFound)
 		return
 	}
-	//update the user balance
+
 	var u user.User
-	result = db.First(&u, "email = ?", ue.User.Email)
-	if result.Error != nil {
+	if result := tx.Where("email = ?", ue.UserEmail).First(&u); result.Error != nil {
+		tx.Rollback()
 		util.SendJSONError(w, "User not found", http.StatusNotFound)
 		return
-
 	}
-	u.Balance = u.Balance - e.Cost
-	db.Save(&u)
-	// Add the user to the event
-	e.Users = append(e.Users, ue.User)
-	db.Save(&e)
 
+	for _, user := range e.Users {
+		if user.Email == u.Email {
+			tx.Rollback()
+			util.SendJSONError(w, "User already in event", http.StatusConflict)
+			return
+		}
+	}
+
+	u.Balance -= e.Cost
+	if result := tx.Save(&u); result.Error != nil {
+		tx.Rollback()
+		util.SendJSONError(w, result.Error.Error()+"error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tx.Model(&e).Association("Users").Append(&u); err != nil {
+		tx.Rollback()
+		util.SendJSONError(w, "Failed to add user to event", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		util.SendJSONError(w, "Transaction commit error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]string{
+		"message": "User joined event successfully",
+		"event":   e.Name,
+		"email":   u.Email,
+	}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		// Log the error of failing to encode or send the response
+		fmt.Println("Error sending response:", err)
+	}
 }
 
 //todo: implement

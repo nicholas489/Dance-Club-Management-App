@@ -11,6 +11,23 @@ import (
 
 func Server(r chi.Router, db *gorm.DB) {
 	// Routes for the API
+
+	r.Route("/login", func(r chi.Router) {
+		r.Post("/user", func(writer http.ResponseWriter, request *http.Request) {
+			user.PostLogin(writer, request, db)
+		})
+		r.Post("/coach", func(writer http.ResponseWriter, request *http.Request) {
+			coach.PostLogin(writer, request, db)
+		})
+	})
+	r.Route("/signup", func(r chi.Router) {
+		r.Post("/user", func(writer http.ResponseWriter, request *http.Request) {
+			user.PostSignup(writer, request, db)
+		})
+		r.Post("/coach", func(writer http.ResponseWriter, request *http.Request) {
+			coach.PostSignup(writer, request, db)
+		})
+	})
 	r.Route("/users", func(r chi.Router) {
 		r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
 		r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
@@ -27,25 +44,16 @@ func Server(r chi.Router, db *gorm.DB) {
 		})
 
 	})
-	r.Route("/login", func(r chi.Router) {
-		r.Post("/", func(writer http.ResponseWriter, request *http.Request) {
-			user.PostLogin(writer, request, db)
-		})
-	})
-	r.Route("/signup", func(r chi.Router) {
-		r.Post("/", func(writer http.ResponseWriter, request *http.Request) {
-			user.PostSignup(writer, request, db)
-		})
-	})
 
 	r.Route("/coach", func(r chi.Router) {
 		r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
 		r.Post("/event/make", func(writer http.ResponseWriter, request *http.Request) {
 			coach.PostEvent(writer, request, db)
 		})
-		r.Get("/event/{name}", func(writer http.ResponseWriter, request *http.Request) {
+		r.Get("/{name}", func(writer http.ResponseWriter, request *http.Request) {
 			coach.GetEvent(writer, request, db)
 		})
+
 	})
 
 }

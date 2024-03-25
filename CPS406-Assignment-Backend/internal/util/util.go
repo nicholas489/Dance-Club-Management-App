@@ -62,7 +62,8 @@ func JwtMiddlewareUser(next http.Handler) http.Handler {
 		}
 
 		// Parse the token
-		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		trimToken := tokenString[7:]
+		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
@@ -96,7 +97,8 @@ func JwtMiddlewareAdmin(next http.Handler) http.Handler {
 		}
 
 		// Parse the token
-		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		trimToken := tokenString[7:]
+		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
@@ -130,11 +132,12 @@ func JwtMiddlewareCoach(next http.Handler) http.Handler {
 		}
 
 		// Parse the token
-		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		trimToken := tokenString[7:]
+		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
-			SendJSONError(w, "Invalid token", http.StatusUnauthorized)
+			SendJSONError(w, "Invalid token, problem with token"+err.Error()+tokenString, http.StatusUnauthorized)
 			return
 		}
 

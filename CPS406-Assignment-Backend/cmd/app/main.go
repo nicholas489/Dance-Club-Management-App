@@ -18,6 +18,7 @@ func main() {
 	dataBase := db.ConnectDB()
 	// Migrate the database
 	db.MigrateDB(dataBase)
+
 	dataBase.Create(&user.User{Name: "test1", Password: "test", Email: "test1@mail.com"})
 	dataBase.Create(&user.User{Name: "test3", Password: "test", Email: "test2@mail.com"})
 	dataBase.Create(&user.User{Name: "test4", Password: "test", Email: "test3@mail.com"})
