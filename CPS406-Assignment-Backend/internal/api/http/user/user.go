@@ -157,7 +157,7 @@ func JoinEvent(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	u.Balance -= e.Cost
 	if result := tx.Save(&u); result.Error != nil {
 		tx.Rollback()
-		util.SendJSONError(w, result.Error.Error()+"error", http.StatusInternalServerError)
+		util.SendJSONError(w, result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
 
