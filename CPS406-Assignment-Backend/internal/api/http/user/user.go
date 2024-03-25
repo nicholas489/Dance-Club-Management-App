@@ -2,6 +2,7 @@ package user
 
 import (
 	"CPS406-Assignment-Backend/internal/util"
+	"CPS406-Assignment-Backend/pkg/event"
 	"CPS406-Assignment-Backend/pkg/jwtM"
 	"CPS406-Assignment-Backend/pkg/login"
 	"CPS406-Assignment-Backend/pkg/user"
@@ -61,7 +62,7 @@ func PostLogin(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{User: true}})
 	tokenString, err := util.GenerateJWT(user.Email, privileges)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		util.SendJSONError(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 
@@ -81,7 +82,7 @@ func PostSignup(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		util.SendJSONError(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -100,13 +101,44 @@ func PostSignup(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{User: true}})
 	tokenString, err := util.GenerateJWT(u.Email, privileges)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		util.SendJSONError(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 	// Send the user details
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Authorization", "Bearer "+tokenString)
 	json.NewEncoder(w).Encode(u)
+}
+
+func JoinEvent(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	// Parse the request body user + event
+	var ue event.UserEvent
+	err := json.NewDecoder(r.Body).Decode(&ue)
+	if err != nil {
+		util.SendJSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Fine the event and add the user to the event
+	var e event.Event
+	result := db.First(&e, "name = ?", ue.Event.Name)
+	if result.Error != nil {
+		util.SendJSONError(w, "Event not found", http.StatusNotFound)
+		return
+	}
+	//update the user balance
+	var u user.User
+	result = db.First(&u, "email = ?", ue.User.Email)
+	if result.Error != nil {
+		util.SendJSONError(w, "User not found", http.StatusNotFound)
+		return
+
+	}
+	u.Balance = u.Balance - e.Cost
+	db.Save(&u)
+	// Add the user to the event
+	e.Users = append(e.Users, ue.User)
+	db.Save(&e)
+
 }
 
 //todo: implement

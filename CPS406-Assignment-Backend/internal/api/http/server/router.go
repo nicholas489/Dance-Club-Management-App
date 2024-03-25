@@ -1,6 +1,7 @@
 package server
 
 import (
+	"CPS406-Assignment-Backend/internal/api/http/coach"
 	"CPS406-Assignment-Backend/internal/api/http/user"
 	"CPS406-Assignment-Backend/internal/util"
 	"github.com/go-chi/chi/v5"
@@ -21,6 +22,9 @@ func Server(r chi.Router, db *gorm.DB) {
 		r.Get("/{id}", func(writer http.ResponseWriter, request *http.Request) {
 			user.GetUser(writer, request, db)
 		})
+		r.Post("/join/event", func(writer http.ResponseWriter, request *http.Request) {
+			user.JoinEvent(writer, request, db)
+		})
 
 	})
 	r.Route("/login", func(r chi.Router) {
@@ -31,6 +35,16 @@ func Server(r chi.Router, db *gorm.DB) {
 	r.Route("/signup", func(r chi.Router) {
 		r.Post("/", func(writer http.ResponseWriter, request *http.Request) {
 			user.PostSignup(writer, request, db)
+		})
+	})
+
+	r.Route("/coach", func(r chi.Router) {
+		r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
+		r.Post("/event/make", func(writer http.ResponseWriter, request *http.Request) {
+			coach.PostEvent(writer, request, db)
+		})
+		r.Get("/event/{name}", func(writer http.ResponseWriter, request *http.Request) {
+			coach.GetEvent(writer, request, db)
 		})
 	})
 
