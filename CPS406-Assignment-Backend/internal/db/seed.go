@@ -54,7 +54,7 @@ func SeedDatabase(db *gorm.DB) {
 	}
 
 	// Create users and enroll to events
-	for i, user := range users {
+	for _, user := range users {
 		result := db.Create(&user)
 		if result.Error != nil {
 			log.Printf("Could not create user: %v", result.Error)
