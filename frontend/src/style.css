@@ -1,0 +1,21 @@
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+}
+
+body {
+    height: 100vh;
+}
+
+#app {
+    min-height: 100%;
+    /* Use min-height to at least be full height but allow expansion */
+    display: flex;
+    flex-direction: column;
+}

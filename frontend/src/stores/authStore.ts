@@ -27,13 +27,13 @@ export const useAuthStore = defineStore('auth', {
                     console.error('Unexpected response status:', response.status);
             }
         },
-        async login(formData: any): Promise<[boolean, string]> {
+        async login(formData: {username: string, password: string}): Promise<[boolean, string]> {
             const response = await fetch('/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: formData,
+                body: JSON.stringify(formData)
             });
 
             if (response.ok) {
