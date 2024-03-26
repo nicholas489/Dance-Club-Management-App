@@ -77,15 +77,15 @@ func PostLogin(writer http.ResponseWriter, request *http.Request, db *gorm.DB) {
 		util.SendJSONError(writer, "Invalid password", http.StatusUnauthorized)
 		return
 	}
-	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{Coach: true}})
+	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{Coach: true, User: true}})
 	// Generate a JWT token
 	token, err := util.GenerateJWT(coach.Email, privileges)
 	if err != nil {
 		util.SendJSONError(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	util.SetTokenAsCookie(writer, token)
 	// Send the token as a response
-	writer.Header().Set("Authorization", "Bearer "+token)
 	writer.WriteHeader(http.StatusOK)
 	// Send the coach as a response
 	json.NewEncoder(writer).Encode(coach)
@@ -106,13 +106,17 @@ func PostSignup(writer http.ResponseWriter, request *http.Request, db *gorm.DB) 
 		return
 	}
 	// Generate a JWT token
-	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{Coach: true}})
+	privileges := util.SetPrivileges(jwtM.CustomClaims{Privileges: jwtM.Privileges{Coach: true, User: true}})
 	token, err := util.GenerateJWT(coach.Email, privileges)
+	if err != nil {
+		util.SendJSONError(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	util.SetTokenAsCookie(writer, token)
 	// Create the coach in the database
 	db.Create(&coach)
 	// Send the coach as a response and set the status code to 201 (Created)
 	writer.WriteHeader(http.StatusCreated)
-	writer.Header().Set("Authorization", "Bearer "+token)
 	json.NewEncoder(writer).Encode(coach)
 }
 

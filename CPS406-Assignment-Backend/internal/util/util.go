@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+func SetTokenAsCookie(w http.ResponseWriter, token string) {
+	// Create a cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",                   // Cookie name
+		Value:    token,                          // JWT token
+		Path:     "/",                            // Cookie path
+		Expires:  time.Now().Add(24 * time.Hour), // Cookie expiration time
+		HttpOnly: true,                           // Accessible only by the web server, helps mitigate XSS
+		Secure:   true,                           // Ensure cookie is sent over HTTPS only
+		SameSite: http.SameSiteStrictMode,        // Strict mode for CSRF mitigation
+	})
+}
+
 func GenerateJWT(username string, privileges jwtM.Privileges) (string, error) {
 	// Create an instance of CustomClaims
 	claims := jwtM.CustomClaims{
@@ -54,16 +67,21 @@ func SetPrivileges(user jwtM.CustomClaims) jwtM.Privileges {
 }
 func JwtMiddlewareUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get the token from the Authorization header
-		tokenString := r.Header.Get("Authorization")
+		// Get the token from the Cookie
+		cookie, err := r.Cookie("auth_token")
+		tokenString := cookie.Value
+		if err != nil {
+			SendJSONError(w, "No token provided", http.StatusUnauthorized)
+			return
+		}
 		if tokenString == "" {
 			SendJSONError(w, "No token provided", http.StatusUnauthorized)
 			return
 		}
 
 		// Parse the token
-		trimToken := tokenString[7:]
-		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
@@ -90,15 +108,16 @@ func JwtMiddlewareUser(next http.Handler) http.Handler {
 func JwtMiddlewareAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the token from the Authorization header
-		tokenString := r.Header.Get("Authorization")
+		cookie, err := r.Cookie("auth_token")
+		tokenString := cookie.Value
 		if tokenString == "" {
 			SendJSONError(w, "No token provided", http.StatusUnauthorized)
 			return
 		}
 
 		// Parse the token
-		trimToken := tokenString[7:]
-		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
@@ -125,15 +144,16 @@ func JwtMiddlewareAdmin(next http.Handler) http.Handler {
 func JwtMiddlewareCoach(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the token from the Authorization header
-		tokenString := r.Header.Get("Authorization")
+		cookie, err := r.Cookie("auth_token")
+		tokenString := cookie.Value
 		if tokenString == "" {
 			SendJSONError(w, "No token provided", http.StatusUnauthorized)
 			return
 		}
 
 		// Parse the token
-		trimToken := tokenString[7:]
-		token, err := jwt.ParseWithClaims(trimToken, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+		token, err := jwt.ParseWithClaims(tokenString, &jwtM.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET")), nil
 		})
 		if err != nil {
