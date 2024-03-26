@@ -119,19 +119,30 @@ Below are tables with sample data that is inserted into the database by the seed
 This data is meant for initial development and testing only and should not be used in production environments.
 
 
-## Routes
-| Method | Endpoint            | Description                        | Middleware                                 |
-|--------|---------------------|------------------------------------|--------------------------------------------|
-| POST   | `/login/user`       | Logs in a user                     | None                                       |
-| POST   | `/login/coach`      | Logs in a coach                    | None                                       |
-| POST   | `/signup/user`      | Signs up a new user                | None                                       |
-| POST   | `/signup/coach`     | Signs up a new coach               | None                                       |
-| GET    | `/users/`           | Retrieves all users                | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
-| GET    | `/user/{id}`        | Retrieves a specific user by ID    | `JwtMiddlewareUser`                        |
-| POST   | `/user/join/event`  | Allows a user to join an event     | `JwtMiddlewareUser`                        |
-| POST   | `/coach/event/make` | Allows a coach to create an event  | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
-| GET    | `/coach/{name}`     | Retrieves a specific event by name | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
-| DELETE | `/coach/delete/{email}` | Deletes user by email          | `JwtMiddlewareCoach`, `JwtMiddlewareAdmin` |
+## API Routes Documentation
 
+Below is the detailed table of the API routes, their descriptions, middleware, and the required JSON structure for requests (where applicable).
+
+| Method | Endpoint          | Description                           | Middleware                  | Required JSON Structure                                           |
+|--------|-------------------|---------------------------------------|-----------------------------|-------------------------------------------------------------------|
+| POST   | `/login/user`     | Logs in a user                        | None                        | `{ "email": "user@example.com", "password": "password123" }`       |
+| POST   | `/login/coach`    | Logs in a coach                       | None                        | `{ "email": "coach@example.com", "password": "password123" }`      |
+| POST   | `/signup/user`    | Signs up a new user                   | None                        | `{ "name": "John Doe", "email": "newuser@example.com", "password": "password123" }` |
+| POST   | `/signup/coach`   | Signs up a new coach                  | None                        | `{ "name": "Jane Doe", "email": "newcoach@example.com", "password": "password123" }` |
+| GET    | `/user/{id}`      | Retrieves a specific user by ID       | `JwtMiddlewareUser`         | N/A                                                               |
+| GET    | `/user/`          | Retrieves all users                   | `JwtMiddlewareUser`         | N/A                                                               |
+| POST   | `/event/join`     | Allows a user to join an event        | `JwtMiddlewareUser`         | `{ "eventName": "Yoga Class", "userEmail": "user@example.com" }`  |
+| POST   | `/event/`         | Allows a coach to create an event     | `JwtMiddlewareCoach`        | `{ "name": "Yoga Class", "location": "Park", "cost": 10 }`         |
+| GET    | `/event/{name}`   | Retrieves a specific event by name    | None                        | N/A                                                               |
+| GET    | `/event/`         | Retrieves all events                  | None                        | N/A                                                               |
+
+## Notes
+
+- The `/{id}` and `/{name}` in the endpoints are placeholders for dynamic values specific to each request.
+- `Required JSON Structure` applies only to POST requests. Ensure the request body matches the structure for successful API calls.
+- Middleware descriptions:
+    - `JwtMiddlewareUser`: Checks for a valid JWT token for a user.
+    - `JwtMiddlewareCoach`: Checks for a valid JWT token for a coach.
+- Ensure to replace placeholder values like `user@example.com`, `password123`, etc., with actual information when making requests.
 
 

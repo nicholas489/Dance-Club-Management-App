@@ -70,18 +70,18 @@ func Server(r chi.Router, db *gorm.DB) {
 
 	})
 
-	r.Route("/coach", func(r chi.Router) {
-		r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
-		r.Post("/event/make", func(writer http.ResponseWriter, request *http.Request) {
-			coach.PostEvent(writer, request, db)
-		})
-		r.Get("/{name}", func(writer http.ResponseWriter, request *http.Request) {
-			coach.GetEvent(writer, request, db)
-		})
-		r.Delete("/delete/{email}", func(writer http.ResponseWriter, request *http.Request) {
-			coach.DeleteUser(writer, request, db)
-		})
-
-	})
+	//r.Route("/coach", func(r chi.Router) {
+	//	r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
+	//	r.Post("/event/make", func(writer http.ResponseWriter, request *http.Request) {
+	//		coach.PostEvent(writer, request, db)
+	//	})
+	//	r.Get("/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	//		coach.GetEvent(writer, request, db)
+	//	})
+	//	r.Delete("/delete/{email}", func(writer http.ResponseWriter, request *http.Request) {
+	//		coach.DeleteUser(writer, request, db)
+	//	})
+	//
+	//})
 
 }
