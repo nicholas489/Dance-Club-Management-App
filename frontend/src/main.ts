@@ -6,7 +6,6 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 import 'primeicons/primeicons.css';
 import ToastService from 'primevue/toastservice';
 
-
 import App from './App.vue'
 import router from './router'
 
