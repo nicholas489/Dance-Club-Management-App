@@ -42,16 +42,21 @@ func Server(r chi.Router, db *gorm.DB) {
 	})
 	// Route for the coach
 	// TODO: Implement the coach routes
-	//r.Route("/coach", func(r chi.Router) {
-	//	r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
-	//	r.Get("/{id}", func(writer http.ResponseWriter, request *http.Request) {
-	//		coach.GetCoach(writer, request, db)
-	//	})
-	//	r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-	//		coach.GetAllCoaches(writer, request, db)
-	//
-	//	})
-	//})
+	r.Route("/coach", func(r chi.Router) {
+		r.Use(util.CombinedJwtMiddleware(util.JwtMiddlewareCoach, util.JwtMiddlewareAdmin))
+		r.Get("/{id}", func(writer http.ResponseWriter, request *http.Request) {
+			coach.GetCoach(writer, request, db)
+		})
+		r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
+			coach.GetAllCoaches(writer, request, db)
+
+		})
+		r.Delete("/{email}", func(writer http.ResponseWriter, request *http.Request) {
+			coach.DeleteUser(writer, request, db)
+		})
+
+	})
+
 	// Route for the event
 	r.Route("/event", func(r chi.Router) {
 		r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
