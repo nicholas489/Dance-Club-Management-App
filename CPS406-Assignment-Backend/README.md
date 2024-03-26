@@ -123,18 +123,18 @@ This data is meant for initial development and testing only and should not be us
 
 Below is the detailed table of the API routes, their descriptions, middleware, and the required JSON structure for requests (where applicable).
 
-| Method | Endpoint          | Description                           | Middleware                  | Required JSON Structure                                           |
-|--------|-------------------|---------------------------------------|-----------------------------|-------------------------------------------------------------------|
-| POST   | `/login/user`     | Logs in a user                        | None                        | `{ "email": "user@example.com", "password": "password123" }`       |
-| POST   | `/login/coach`    | Logs in a coach                       | None                        | `{ "email": "coach@example.com", "password": "password123" }`      |
-| POST   | `/signup/user`    | Signs up a new user                   | None                        | `{ "name": "John Doe", "email": "newuser@example.com", "password": "password123" }` |
+| Method | Endpoint          | Description                           | Middleware                  | Required JSON Structure                                                              |
+|--------|-------------------|---------------------------------------|-----------------------------|--------------------------------------------------------------------------------------|
+| POST   | `/login/user`     | Logs in a user                        | None                        | `{ "email": "user@example.com", "password": "password123" }`                         |
+| POST   | `/login/coach`    | Logs in a coach                       | None                        | `{ "email": "coach@example.com", "password": "password123" }`                        |
+| POST   | `/signup/user`    | Signs up a new user                   | None                        | `{ "name": "John Doe", "email": "newuser@example.com", "password": "password123" }`  |
 | POST   | `/signup/coach`   | Signs up a new coach                  | None                        | `{ "name": "Jane Doe", "email": "newcoach@example.com", "password": "password123" }` |
-| GET    | `/user/{id}`      | Retrieves a specific user by ID       | `JwtMiddlewareUser`         | N/A                                                               |
-| GET    | `/user/`          | Retrieves all users                   | `JwtMiddlewareUser`         | N/A                                                               |
-| POST   | `/event/join`     | Allows a user to join an event        | `JwtMiddlewareUser`         | `{ "eventName": "Yoga Class", "userEmail": "user@example.com" }`  |
-| POST   | `/event/`         | Allows a coach to create an event     | `JwtMiddlewareCoach`        | `{ "name": "Yoga Class", "location": "Park", "cost": 10 }`         |
-| GET    | `/event/{name}`   | Retrieves a specific event by name    | None                        | N/A                                                               |
-| GET    | `/event/`         | Retrieves all events                  | None                        | N/A                                                               |
+| GET    | `/user/{id}`      | Retrieves a specific user by ID       | `JwtMiddlewareUser`         | N/A                                                                                  |
+| GET    | `/user/`          | Retrieves all users                   | `JwtMiddlewareUser`         | N/A                                                                                  |
+| POST   | `/event/join`     | Allows a user to join an event        | `JwtMiddlewareUser`         | `{ "event_name": "Yoga Class", "user_email": "user@example.com" }`                   |
+| POST   | `/event/`         | Allows a coach to create an event     | `JwtMiddlewareCoach`        | `{ "name": "Yoga Class", "location": "Park", "cost": 10 }`                           |
+| GET    | `/event/{name}`   | Retrieves a specific event by name    | None                        | N/A                                                                                  |
+| GET    | `/event/`         | Retrieves all events                  | None                        | N/A                                                                                  |
 
 ## Notes
 
