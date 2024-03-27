@@ -7,6 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Bookings: typeof import('./src/components/dash_comp/Bookings.vue')['default']
+    Box4: typeof import('./src/components/dash_comp/Box4.vue')['default']
+    BoxFour: typeof import('./src/components/dash_comp/BoxFour.vue')['default']
+    Dashboard: typeof import('./src/components/Dashboard.vue')['default']
+    DashboardView: typeof import('./src/components/organisms/DashboardView.vue')['default']
+    Finances: typeof import('./src/components/dash_comp/Finances.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
@@ -15,9 +21,9 @@ declare module 'vue' {
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     LoginForm: typeof import('./src/components/organisms/loginForm.vue')['default']
     Navbar: typeof import('./src/components/organisms/navbar.vue')['default']
-    NavBar: typeof import('./src/components/organisms/navBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Schedule: typeof import('./src/components/dash_comp/Schedule.vue')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
