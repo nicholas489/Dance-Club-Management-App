@@ -39,6 +39,9 @@ func Server(r chi.Router, db *gorm.DB) {
 		r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 			user.GetAllUsers(writer, request, db)
 		})
+		r.With(util.JwtMiddlewareCoach).Delete("/{id}", func(writer http.ResponseWriter, request *http.Request) {
+			coach.DeleteUser(writer, request, db)
+		})
 	})
 	// Route for the coach
 	// TODO: Implement the coach routes
@@ -51,10 +54,6 @@ func Server(r chi.Router, db *gorm.DB) {
 			coach.GetAllCoaches(writer, request, db)
 
 		})
-		r.Delete("/{email}", func(writer http.ResponseWriter, request *http.Request) {
-			coach.DeleteUser(writer, request, db)
-		})
-
 	})
 
 	// Route for the event
