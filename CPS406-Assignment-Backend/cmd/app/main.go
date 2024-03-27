@@ -3,10 +3,12 @@ package main
 import (
 	"CPS406-Assignment-Backend/internal/api/http/server"
 	"CPS406-Assignment-Backend/internal/db"
-	"CPS406-Assignment-Backend/pkg/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -15,13 +17,28 @@ func main() {
 	dataBase := db.ConnectDB()
 	// Migrate the database
 	db.MigrateDB(dataBase)
-	dataBase.Create(&user.User{Name: "test1", Password: "test"})
-	dataBase.Create(&user.User{Name: "test3", Password: "test"})
-	dataBase.Create(&user.User{Name: "test4", Password: "test"})
+
+	//dataBase.Create(&user.User{Name: "test1", Password: "test", Email: "test1@mail.com"})
+	//dataBase.Create(&user.User{Name: "test3", Password: "test", Email: "test2@mail.com"})
+	//dataBase.Create(&user.User{Name: "test4", Password: "test", Email: "test3@mail.com"})
+	//dataBase.Create(&coach.Coach{
+	//	UserName:    "first",
+	//	Email:       "first@gmail.com",
+	//	PhoneNumber: 0,
+	//	Password:    "test",
+	//})
 	// Create a new router (chi router)
-	r := chi.NewRouter()
+	// Seed the database
+	db.SeedDatabase(dataBase)
+	// Load the .env file
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
 	// A good base middleware stack
+	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
@@ -39,7 +56,8 @@ func main() {
 		w.Write([]byte("The server is running!"))
 	})
 
-	// Listen for requests on port 8080
-	http.ListenAndServe(":8080", r)
+	// Listen for requests on port in your .env file
+	portNum := ":" + os.Getenv("PORT")
+	http.ListenAndServe(portNum, r)
 
 }
