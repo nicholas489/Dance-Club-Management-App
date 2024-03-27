@@ -21,6 +21,7 @@ declare module 'vue' {
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     LoginForm: typeof import('./src/components/organisms/loginForm.vue')['default']
     Navbar: typeof import('./src/components/organisms/navbar.vue')['default']
+    Payment: typeof import('./src/components/Payment.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Schedule: typeof import('./src/components/dash_comp/Schedule.vue')['default']
