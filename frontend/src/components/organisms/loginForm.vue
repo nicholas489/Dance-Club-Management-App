@@ -15,6 +15,7 @@ const toast = useToast();
 const username = ref('');
 const password = ref('');
 const submitForm = async () => {
+    await router.push({ name: 'dashboard' });   //IMPORTANT remove after review (by-pass for the login page)
     if (!username.value || !password.value) {
         toast.add({severity: 'error', summary: 'Login', detail: 'Please fill in all fields', life: 3000});
         return;
@@ -23,7 +24,7 @@ const submitForm = async () => {
     const loginResult = await authStore.login({username: username.value, password: password.value});
     if (loginResult[0]) {
         toast.add({severity: 'success', summary: 'Login', detail: 'Successfully Logged in', life: 3000});
-        await router.push({name: 'dashboard'});
+        await router.push({ name: 'dashboard' });
     } else {
         toast.add({severity: 'error', summary: 'Login', detail: loginResult[1], life: 3000});
     }
