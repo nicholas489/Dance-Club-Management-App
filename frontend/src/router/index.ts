@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import MemberDashboardView from "@/views/MemberDashboardView.vue";
+import CoachDashboardView from "@/views/CoachDashboardView.vue";
 
 
 const router = createRouter({
@@ -13,8 +14,13 @@ const router = createRouter({
         },
         {
             path: '/member/dashboard',
-            name: 'memberDashboard',
-            component: MemberDashboardView
+            name: 'MemberDashboardView',
+            component: MemberDashboardView, // Your component for member dashboard
+        },
+        {
+            path: '/coach/dashboard',
+            name: 'CoachDashboardView',
+            component: CoachDashboardView, // Your component for coach dashboard
         }
     ]
 })
